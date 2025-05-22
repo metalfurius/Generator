@@ -1,13 +1,44 @@
 :root {
-    --primary-color: #6a11cb; /* Morado vibrante */
-    --secondary-color: #2575fc; /* Azul */
-    --background-color: #f4f7f6; /* Gris muy claro */
-    --card-background: #ffffff;
-    --text-color: #333;
-    --text-light: #555;
-    --border-color: #e0e0e0;
+    /* Dark Mode Variables */
+    --primary-color-dark: #7f5af0; /* Lila más brillante */
+    --secondary-color-dark: #2cb67d; /* Verde menta */
+    --background-color-dark: #16161a; /* Negro casi puro */
+    --card-background-dark: #242629; /* Gris oscuro para tarjetas */
+    --text-color-dark: #fffffe; /* Blanco */
+    --text-light-dark: #94a1b2; /* Gris azulado claro */
+    --border-color-dark: #404040; /* Gris oscuro para bordes */
+
+    /* Light Mode Variables (Original) */
+    --primary-color-light: #6a11cb; /* Morado vibrante */
+    --secondary-color-light: #2575fc; /* Azul */
+    --background-color-light: #f4f7f6; /* Gris muy claro */
+    --card-background-light: #ffffff;
+    --text-color-light-theme: #333;
+    --text-light-light: #555;
+    --border-color-light: #e0e0e0;
+
     --success-color: #4CAF50;
     --font-family: 'Poppins', sans-serif;
+
+    /* Default to Dark Mode */
+    --primary-color: var(--primary-color-dark);
+    --secondary-color: var(--secondary-color-dark);
+    --background-color: var(--background-color-dark);
+    --card-background: var(--card-background-dark);
+    --text-color: var(--text-color-dark);
+    --text-light: var(--text-light-dark);
+    --border-color: var(--border-color-dark);
+}
+
+/* Optional: Add a class to body to switch to light mode if ever needed */
+body.light-mode {
+    --primary-color: var(--primary-color-light);
+    --secondary-color: var(--secondary-color-light);
+    --background-color: var(--background-color-light);
+    --card-background: var(--card-background-light);
+    --text-color: var(--text-color-light-theme);
+    --text-light: var(--text-light-light);
+    --border-color: var(--border-color-light);
 }
 
 * {
@@ -47,6 +78,7 @@ header h1 {
     font-weight: 700;
     background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
+    background-clip: text; /* Added standard property */
     -webkit-text-fill-color: transparent;
     margin-bottom: 5px;
 }
@@ -61,7 +93,7 @@ header p {
     padding: 20px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    background-color: #fdfdfd; /* Un poco más claro que el fondo general */
+    background-color: var(--card-background);
 }
 
 .generator-section h2 {
@@ -86,13 +118,13 @@ header p {
     border: 1px solid var(--border-color);
     border-radius: 6px 0 0 6px; /* Redondeo solo a la izquierda */
     font-size: 1em;
-    background-color: #f9f9f9;
+    background-color: var(--background-color);
     color: var(--text-color);
     outline: none;
 }
 
 .result-display input[type="text"]::placeholder {
-    color: #aaa;
+    color: var(--text-light);
 }
 
 .result-display button {
@@ -100,14 +132,14 @@ header p {
     border: 1px solid var(--border-color);
     border-left: none; /* Quita borde izquierdo para unirse al input */
     border-radius: 0 6px 6px 0; /* Redondeo solo a la derecha */
-    background-color: #e9ecef;
+    background-color: var(--card-background);
     cursor: pointer;
     transition: background-color 0.2s ease;
     height: 46px; /* Para alinear con el input */
 }
 
 .result-display button:hover {
-    background-color: #ced4da;
+    background-color: var(--border-color);
 }
 
 .result-display button .icon {
@@ -137,7 +169,6 @@ header p {
     margin-left: 5px;
     cursor: pointer;
 }
-
 
 .option-group input[type="number"] {
     padding: 8px 10px;
@@ -192,7 +223,7 @@ footer {
     visibility: hidden;
     min-width: 250px;
     background-color: var(--success-color);
-    color: white;
+    color: #ffffff;
     text-align: center;
     border-radius: 4px;
     padding: 16px;
@@ -211,7 +242,6 @@ footer {
     opacity: 1;
     transition: opacity 0.5s linear;
 }
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

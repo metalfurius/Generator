@@ -51,8 +51,21 @@ document.addEventListener('DOMContentLoaded', () => {
         symbols: "!@#$%^&*()_+-=[]{}|;:',.<>/?`~"
     };
 
+    // Set max length for password input based on its max attribute
+    if (lengthInput) {
+        lengthInput.max = "64"; // Setting a practical max limit, e.g., 64
+    }
+
     function generatePassword() {
-        const length = parseInt(lengthInput.value);
+        let length = parseInt(lengthInput.value);
+        // Ensure length does not exceed the new maximum (e.g., 64)
+        const maxLength = 64;
+        if (length > maxLength) {
+            length = maxLength;
+            lengthInput.value = maxLength; // Update the input field as well
+            alert(`La longitud máxima de la contraseña es ${maxLength}. Se ha ajustado automáticamente.`);
+        }
+
         let characterPool = "";
         let generatedPassword = "";
 
