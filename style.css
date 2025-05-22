@@ -155,23 +155,26 @@ header p {
     gap: 20px; /* Increased gap */
 }
 
-.option-group, .checkbox-group {
+.option-group { /* Only apply column direction to option-group */
     display: flex;
-    flex-direction: column; /* Stack label and input vertically */
-    align-items: flex-start; /* Align items to the start */
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.checkbox-group { /* Keep checkbox-group as row */
+    display: flex;
+    align-items: center; /* Vertically align items in the center */
 }
 
 .option-group label, .checkbox-group label {
-    margin-bottom: 8px; /* Add space below the label */
+    margin-bottom: 8px;
     font-size: 0.9em;
     color: var(--text-light);
 }
 
 .checkbox-group label {
-    margin-left: 0; /* Remove left margin, handled by flex alignment */
+    margin-left: 0; /* Reset margin-left */
     cursor: pointer;
-    display: flex; /* Align checkbox and text */
-    align-items: center;
 }
 
 .option-group input,
