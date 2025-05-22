@@ -16,6 +16,37 @@
         <main>
             <section class="generator-section">
                 <h2>Unique Username</h2>
+                <div class="options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeAdjectives" checked>
+                        <label for="includeAdjectives">Include Adjectives</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeNouns" checked>
+                        <label for="includeNouns">Include Nouns</label>
+                    </div>
+                    <div class="option-group">
+                        <label for="numDigits">Number of Digits (0-5):</label>
+                        <input type="number" id="numDigits" value="3" min="0" max="5">
+                    </div>
+                    <div class="option-group">
+                        <label for="usernameSeparator">Separator:</label>
+                        <select id="usernameSeparator">
+                            <option value="none">None</option>
+                            <option value="hyphen">-</option>
+                            <option value="underscore">_</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="usernameCapitalization">Capitalization:</label>
+                        <select id="usernameCapitalization">
+                            <option value="pascalcase">PascalCase</option>
+                            <option value="camelcase">camelCase</option>
+                            <option value="lowercase">lowercase</option>
+                            <option value="uppercase">UPPERCASE</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="result-display">
                     <input type="text" id="usernameOutput" readonly placeholder="Your username here...">
                     <button id="copyUsernameBtn" title="Copy Username">

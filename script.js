@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const usernameOutput = document.getElementById('usernameOutput');
     const generateUsernameBtn = document.getElementById('generateUsernameBtn');
     const copyUsernameBtn = document.getElementById('copyUsernameBtn');
+    const includeAdjectivesCheckbox = document.getElementById('includeAdjectives');
+    const includeNounsCheckbox = document.getElementById('includeNouns');
+    const numDigitsInput = document.getElementById('numDigits');
+    const usernameSeparatorSelect = document.getElementById('usernameSeparator');
+    const usernameCapitalizationSelect = document.getElementById('usernameCapitalization');
 
     // Elementos del DOM para Contraseña
     const passwordOutput = document.getElementById('passwordOutput');
@@ -191,10 +196,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function generateUsername() {
-        const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-        const noun = nouns[Math.floor(Math.random() * nouns.length)];
-        const num = Math.floor(Math.random() * 900) + 100; // Número de 3 dígitos (100-999)
-        return `${adj}${noun}${num}`;
+        const includeAdjectives = includeAdjectivesCheckbox.checked;
+        const includeNouns = includeNounsCheckbox.checked;
+        let numDigits = parseInt(numDigitsInput.value);
+        const separator = usernameSeparatorSelect.value;
+        const capitalization = usernameCapitalizationSelect.value;
+
+        if (!includeAdjectives && !includeNouns) {
+            alert("Please select at least one component (adjectives or nouns) for the username.");
+            return usernameOutput.value || ""; // Return current or empty if none
+        }
+
+        if (numDigits < 0) numDigits = 0;
+        if (numDigits > 5) numDigits = 5;
+        numDigitsInput.value = numDigits; // Correct the input field if necessary
+
+        let parts = [];
+        if (includeAdjectives) {
+            parts.push(adjectives[Math.floor(Math.random() * adjectives.length)]);
+        }
+        if (includeNouns) {
+            parts.push(nouns[Math.floor(Math.random() * nouns.length)]);
+        }
+
+        let username = "";
+        if (parts.length > 0) {
+            switch (capitalization) {
+                case "pascalcase":
+                    username = parts.map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join(separator === 'none' ? '' : (separator === 'hyphen' ? '-' : '_'));
+                    break;
+                case "camelcase":
+                    username = parts[0].toLowerCase() +
+                               parts.slice(1).map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join(separator === 'none' ? '' : (separator === 'hyphen' ? '-' : '_'));
+                    if (parts.length > 1 && separator !== 'none') { // camelCase joins parts directly unless separator is used
+                        username = parts[0].toLowerCase() + parts.slice(1).map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join('');
+                        if (separator === 'hyphen') username = username.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, ''); //簡易的 hyphenated camelCase
+                        if (separator === 'underscore') username = username.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, ''); //簡易的 underscored camelCase
+                    } else {
+                         username = parts.map((part, index) => 
+                            index === 0 ? part.toLowerCase() : part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+                        ).join('');
+                    }
+                    break;
+                case "lowercase":
+                    username = parts.map(part => part.toLowerCase()).join(separator === 'none' ? '' : (separator === 'hyphen' ? '-' : '_'));
+                    break;
+                case "uppercase":
+                    username = parts.map(part => part.toUpperCase()).join(separator === 'none' ? '' : (separator === 'hyphen' ? '-' : '_'));
+                    break;
+            }
+        }
+
+        if (numDigits > 0) {
+            const randomNumber = Math.floor(Math.random() * Math.pow(10, numDigits));
+            username += randomNumber.toString().padStart(numDigits, '0');
+        }
+
+        // Ensure username is not empty if adjectives/nouns were initially selected but resulted in empty string (e.g. due to separator logic)
+        if ((includeAdjectives || includeNouns) && !username && numDigits === 0) {
+            // Fallback to a simple random adjective/noun if generation results in empty and no numbers
+            if (includeAdjectives) username = adjectives[Math.floor(Math.random() * adjectives.length)];
+            else if (includeNouns) username = nouns[Math.floor(Math.random() * nouns.length)];
+            // Apply basic capitalization if it was empty
+            if (capitalization === "pascalcase" || capitalization === "uppercase") username = username.charAt(0).toUpperCase() + username.slice(1);
+            else username = username.toLowerCase();
+        }
+
+        return username;
     }
 
     generateUsernameBtn.addEventListener('click', () => {
