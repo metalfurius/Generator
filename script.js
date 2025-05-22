@@ -193,9 +193,13 @@ document.addEventListener('DOMContentLoaded', () => {
         "Wanderer", "Warrior", "Weapon", "Wizard", "World", "Yakuza", "Yandere", "Yojimbo",
         "Yokai", "Yurei", "Zodiac"
     ];
-
-
     function generateUsername() {
+        // Check if elements exist before accessing their properties
+        if (!includeAdjectivesCheckbox || !includeNounsCheckbox || !numDigitsInput || !usernameSeparatorSelect || !usernameCapitalizationSelect) {
+            console.error('Username generation elements not found');
+            return 'CodeOverdose' + Math.floor(Math.random() * 1000); // Fallback username
+        }
+        
         const includeAdjectives = includeAdjectivesCheckbox.checked;
         const includeNouns = includeNounsCheckbox.checked;
         let numDigits = parseInt(numDigitsInput.value);
@@ -263,11 +267,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return username;
+    }    if (generateUsernameBtn) {
+        generateUsernameBtn.addEventListener('click', () => {
+            usernameOutput.value = generateUsername();
+        });
     }
-
-    generateUsernameBtn.addEventListener('click', () => {
-        usernameOutput.value = generateUsername();
-    });
 
     // --- Lógica para generar Contraseñas ---
     const charSets = {
@@ -351,12 +355,12 @@ document.addEventListener('DOMContentLoaded', () => {
             [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap
         }
         return arr.join('');
+    }    if (generatePasswordBtn) {
+        generatePasswordBtn.addEventListener('click', () => {
+            const pass = generatePassword();
+            if (pass && passwordOutput) passwordOutput.value = pass;
+        });
     }
-
-    generatePasswordBtn.addEventListener('click', () => {
-        const pass = generatePassword();
-        if (pass) passwordOutput.value = pass;
-    });
 
 
     // --- Lógica para Copiar al Portapapeles ---
@@ -398,27 +402,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('No se pudo copiar al portapapeles.');
             }
         });
+    }    if (copyUsernameBtn && usernameOutput) {
+        copyUsernameBtn.addEventListener('click', () => {
+            copyToClipboard(usernameOutput.value, copyUsernameBtn);
+        });
     }
 
-    copyUsernameBtn.addEventListener('click', () => {
-        copyToClipboard(usernameOutput.value, copyUsernameBtn);
-    });
-
-    copyPasswordBtn.addEventListener('click', () => {
-        copyToClipboard(passwordOutput.value, copyPasswordBtn);
-    });
+    if (copyPasswordBtn && passwordOutput) {
+        copyPasswordBtn.addEventListener('click', () => {
+            copyToClipboard(passwordOutput.value, copyPasswordBtn);
+        });
+    }
     
     function showToast() {
         toast.className = "toast show";
         setTimeout(() => {
             toast.className = toast.className.replace("show", "");
         }, 2500); 
+    }    // Generar un usuario y contraseña al cargar la página
+    if (usernameOutput) {
+        usernameOutput.value = generateUsername();
     }
-
-    // Generar un usuario y contraseña al cargar la página
-    usernameOutput.value = generateUsername();
+    
     // Ensure password generation on load also respects constraints
-    const initialPass = generatePassword();
-    if (initialPass) passwordOutput.value = initialPass;
+    if (passwordOutput) {
+        const initialPass = generatePassword();
+        if (initialPass) passwordOutput.value = initialPass;
+    }
 
 });
