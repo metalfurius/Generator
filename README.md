@@ -39,6 +39,10 @@ A web application for generating unique usernames and secure passwords with a cl
 *   Utilizes modern CSS for styling and layout.
 *   Client-side generation of usernames and passwords.
 
+## Validation
+
+The password generator uses the browser Web Crypto API with rejection sampling and fails closed when secure randomness is unavailable. With Node.js 22 or newer, run `npm ci`, `npm run check`, `npm run build`, and `npx --no-install playwright test --workers=1` to run the pinned unit, integrity, coverage, and Chromium/Firefox desktop/mobile browser checks.
+
 ## Contributing
 
 Contributions are welcome! If you have suggestions or want to improve CodeOverdose, please follow these steps:
