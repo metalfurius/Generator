@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const symbolsCheckbox = document.getElementById('symbols');
     const generatePasswordBtn = document.getElementById('generatePasswordBtn');
     const copyPasswordBtn = document.getElementById('copyPasswordBtn');
+    const passwordError = document.getElementById('passwordError');
 
     // Toast notification
     const toast = document.getElementById('toast');
@@ -274,91 +275,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Lógica para generar Contraseñas ---
-    const charSets = {
-        uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        lowercase: "abcdefghijklmnopqrstuvwxyz",
-        numbers: "0123456789",
-        symbols: "!@#$%^&*()_+-=[]{}|;:',.<>/?`~"
-    };
+    const passwordGenerator = window.PasswordGenerator;
 
-    // Set max length for password input based on its HTML max attribute or a defined practical max
-    const MAX_PASSWORD_LENGTH = 64; // Define a practical maximum
-    if (lengthInput) {
-        lengthInput.max = MAX_PASSWORD_LENGTH.toString(); // Update HTML attribute if not already set
+    function getPasswordSelection() {
+        return {
+            uppercase: uppercaseCheckbox.checked,
+            lowercase: lowercaseCheckbox.checked,
+            numbers: numbersCheckbox.checked,
+            symbols: symbolsCheckbox.checked
+        };
+    }
+
+    function setPasswordError(message) {
+        if (!passwordError) return;
+        passwordError.textContent = message;
+        passwordError.hidden = !message;
     }
 
     function generatePassword() {
-        let length = parseInt(lengthInput.value);
-
-        // Ensure length does not exceed the new maximum
-        if (length > MAX_PASSWORD_LENGTH) {
-            length = MAX_PASSWORD_LENGTH;
-            lengthInput.value = MAX_PASSWORD_LENGTH; // Update the input field as well
-            alert(`Password length cannot exceed ${MAX_PASSWORD_LENGTH}. It has been adjusted.`);
-        }
-         if (length < 8) { // Or your desired minimum
-            length = 8;
-            lengthInput.value = 8;
-            // alert(`Password length cannot be less than 8. It has been adjusted.`); // Optional alert
+        if (!passwordGenerator) {
+            throw new Error('Secure password generation is unavailable. Please reload the page.');
         }
 
-
-        let characterPool = "";
-        let generatedPassword = "";
-
-        if (uppercaseCheckbox.checked) characterPool += charSets.uppercase;
-        if (lowercaseCheckbox.checked) characterPool += charSets.lowercase;
-        if (numbersCheckbox.checked) characterPool += charSets.numbers;
-        if (symbolsCheckbox.checked) characterPool += charSets.symbols;
-
-        if (characterPool === "") {
-            // Default to all types if none selected, and ensure checkboxes reflect this
-            uppercaseCheckbox.checked = true;
-            lowercaseCheckbox.checked = true;
-            numbersCheckbox.checked = true;
-            symbolsCheckbox.checked = true;
-            characterPool = charSets.uppercase + charSets.lowercase + charSets.numbers + charSets.symbols;
-            alert("Please select at least one character type. Defaulting to all types.");
-        }
-
-        // Ensure at least one character from each selected type if possible
-        let guaranteedChars = "";
-        if (uppercaseCheckbox.checked) guaranteedChars += getRandomChar(charSets.uppercase);
-        if (lowercaseCheckbox.checked) guaranteedChars += getRandomChar(charSets.lowercase);
-        if (numbersCheckbox.checked) guaranteedChars += getRandomChar(charSets.numbers);
-        if (symbolsCheckbox.checked) guaranteedChars += getRandomChar(charSets.symbols);
-        
-        // If the length is less than the number of guaranteed characters,
-        // use only a subset of guaranteed characters, shuffled.
-        if (length < guaranteedChars.length) {
-            generatedPassword = shuffleString(guaranteedChars).substring(0, length);
-        } else {
-            generatedPassword = guaranteedChars;
-            for (let i = guaranteedChars.length; i < length; i++) {
-                generatedPassword += getRandomChar(characterPool);
-            }
-            generatedPassword = shuffleString(generatedPassword);
-        }
-        
-        return generatedPassword;
+        return passwordGenerator.generatePassword(lengthInput.value, getPasswordSelection());
     }
 
-    function getRandomChar(str) {
-        if (!str || str.length === 0) return ''; // Safeguard
-        return str[Math.floor(Math.random() * str.length)];
-    }
-
-    function shuffleString(str) {
-        const arr = str.split('');
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap
-        }
-        return arr.join('');
-    }    if (generatePasswordBtn) {
+    if (generatePasswordBtn) {
         generatePasswordBtn.addEventListener('click', () => {
-            const pass = generatePassword();
-            if (pass && passwordOutput) passwordOutput.value = pass;
+            try {
+                const pass = generatePassword();
+                if (passwordOutput) passwordOutput.value = pass;
+                setPasswordError('');
+            } catch (error) {
+                if (passwordOutput) passwordOutput.value = '';
+                setPasswordError(error.message || 'Unable to generate a secure password. Please try again.');
+            }
         });
     }
 
@@ -424,10 +375,13 @@ document.addEventListener('DOMContentLoaded', () => {
         usernameOutput.value = generateUsername();
     }
     
-    // Ensure password generation on load also respects constraints
+    // Generate a password on load while preserving the configured UI contract.
     if (passwordOutput) {
-        const initialPass = generatePassword();
-        if (initialPass) passwordOutput.value = initialPass;
+        try {
+            passwordOutput.value = generatePassword();
+        } catch (error) {
+            setPasswordError(error.message || 'Unable to generate a secure password. Please try again.');
+        }
     }
 
 });

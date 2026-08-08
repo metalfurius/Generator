@@ -1,0 +1,21 @@
+{
+  "name": "codeoverdose-generator",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static username and secure password generator",
+  "scripts": {
+    "build": "node tests/static-integrity.test.js",
+    "check": "npm run lint && npm run test:coverage",
+    "lint": "node --check password-generator.js && node --check script.js && node --check tests/static-server.js",
+    "security": "npm audit --audit-level=high",
+    "test": "node --test tests/password-generator.test.js tests/static-integrity.test.js",
+    "test:browser": "npx --no-install playwright test --workers=1 --reporter=list",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=password-generator.js --test-coverage-lines=90 --test-coverage-functions=90 --test-coverage-branches=80 tests/password-generator.test.js tests/static-integrity.test.js"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1"
+  }
+}

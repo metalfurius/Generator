@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install pinned dependencies
+        run: npm ci
+
+      - name: Run lint, unit, coverage, and static integrity checks
+        run: npm run check
+
+      - name: Run static build check
+        run: npm run build
+
+      - name: Run dependency security audit
+        run: npm audit --audit-level=high
+
+      - name: Install Chromium and Firefox
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: Run desktop and mobile browser acceptance
+        run: npx --no-install playwright test --workers=1 --reporter=list

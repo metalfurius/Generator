@@ -148,6 +148,12 @@ header p {
     stroke: var(--text-light);
 }
 
+.error-message {
+    color: #ff8a8a;
+    font-size: 0.9em;
+    margin: -5px 0 15px;
+}
+
 .options {
     margin-bottom: 20px;
     display: grid;
